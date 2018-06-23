@@ -26,9 +26,30 @@ class Scraper
   end
 
   def self.scrape_profile_page(profile_url)
+    # {:twitter=>"http://twitter.com/flatironschool",
+    #   :linkedin=>"https://www.linkedin.com/in/flatironschool",
+    #   :github=>"https://github.com/learn-co,
+    #   :blog=>"http://flatironschool.com",
+    #   :profile_quote=>"\"Forget safety. Live where you fear to live. Destroy your reputation. Be notorious.\" - Rumi",
+    #   :bio=> "I'm a school"
+    #  }
     student_page = Nokogiri::HTML(open(profile_url))
     student_info = {}
-    
+    student_info[:profile_quote] = student_page.css(".profile-quote").text 
+    student_info[:bio] = student_page.css(".description-holder p").text 
+    student_page.css(".social-icon-container").each do |info|
+      link = "#{student_page.css(".social-icon-container").attr("href")}"
+      if link.include?("twitter")
+        student_info[:twitter] = link 
+      elsif link.include?("linkedin")
+        student_info[:linkedin] = link 
+      elsif link.include?("github")
+        student_info[:github] = link 
+      else link.include?("blog")
+        student_info[:blog] = link 
+      end 
+    end 
+    student_info 
   end
 
 end
